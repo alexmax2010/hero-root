@@ -1,0 +1,42 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /heroServices
+---
+logging:
+  #pattern:
+  #console: %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%nTT
+  level:
+    root: DEBUG
+---
+security:
+  ignored: /**
+---
+management:
+  context-path: /actuator
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      all: true
+      jvm: true
+      http: true
+      hikaricp: true
+      process: true
+      tomcat: true
+      jdbc: true
+      logback: true
+      system: true
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true

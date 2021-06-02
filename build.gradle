@@ -1,0 +1,53 @@
+ext {
+    bomVersion = 'latest'
+    baseVersion = '1.0.0-SNAPSHOT'
+}
+
+buildscript {
+    //Script para aplicar las variables de url de repo y repos
+    apply from: "https://bitbucket.org/corporacionfavorita/dev-scripts/raw/HEAD/gradle-ext.gradle"
+    repositories repos
+
+    //Script que define las version de plugins a utilizar
+    apply from: "${serverCodeUrl}plugins.gradle"
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${dependenciesManagementPluginVersion}"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeGradlePluginVersion}"
+        classpath "org.owasp:dependency-check-gradle:${gradleOwaspDependencyCheckVersion}"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:${gradleAptPluginVersion}"
+
+    }
+}
+
+//Script para aplicar las variables de ambientes de repo y repos
+apply from: "https://bitbucket.org/corporacionfavorita/dev-scripts/raw/HEAD/gradle-ext.gradle"
+
+//Script para aplicar el sonarqube
+apply from: "${serverCodeUrl}global.gradle"
+
+subprojects {
+    apply plugin: 'java'
+    apply from: "${serverCodeUrl}integration-test.gradle?raw"
+
+    //Script que aplica todas las configuraciones y plugin comunes a  todos los subproyectos
+    apply from: "${serverCodeUrl}projects.gradle"
+
+    repositories repos
+    dependencyManagement {
+        imports {
+            mavenBom "ec.com.smx.base:fwk-platform-bom:${bomVersion}"
+        }
+        apply from: project.rootDir.toString() + '/bomOverride.gradle'
+    }
+
+    pmd {
+        rulePriority = 5
+    }
+}
+
+allprojects {
+    group = "com.kruger.hero"
+    version = "${baseVersion}"
+}

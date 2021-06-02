@@ -1,0 +1,11 @@
+apply from: "${serverCodeUrl}querydsl.gradle?raw"
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    compile group: 'ec.com.kruger', name: 'fwk-utilitario-validation'
+    compile group: 'javax.validation', name: 'validation-api'
+
+    testCompile group: 'junit', name: 'junit'
+    testCompile group: 'org.mockito', name: 'mockito-core'
+}

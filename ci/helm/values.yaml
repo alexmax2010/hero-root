@@ -1,0 +1,260 @@
+global:
+  appVersion: 1.0.0-SNAPSHOT
+  name: hero-services
+deployment:
+  # Default values for deployment.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+
+  replicaCount: 1
+
+  image:
+    registry: cf1dck.cfavorita.net
+    repository: ec.com.smx.base/hero-services
+    pullPolicy: Always
+
+  containerPorts:
+    http:
+      port: 8080
+      protocol: TCP
+    https:
+      disabled: true
+
+  livenessProbe:
+    httpGet:
+      path: /heroServices/actuator/health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 20
+    timeoutSeconds: 180
+  readinessProbe:
+    httpGet:
+      path: /heroServices/actuator/health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 20
+    timeoutSeconds: 180
+
+  imagePullSecrets:
+    - cf-regcred
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: false
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: true
+    annotations: {}
+      # nginx.ingress.kubernetes.io/rewrite-target: /
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: aplpre.favorita.ec
+        paths:
+          - /heroServices/
+
+  resources:
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      cpu: 100m
+      memory: 1024Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: cf-node-group
+            operator: In
+            values:
+            - apps
+
+  # Generate a config map with values
+
+  configmap:
+    enabled: false
+    #   name: env
+    #   data:
+    #     - key: CURRENT_PROFILE
+    #       value: CONSOLA
+    #     - key: domain
+    #       value: favorita.ec
+
+
+  # envVars is a map of strings to strings that specifies hard coded environment variables that should be set on the
+  # application container. The keys will be mapped to environment variable keys, with the values mapping to the
+  # environment variable values.
+  #
+  # NOTE: If you wish to set environment variables using Secrets, see the `secrets` setting in this file.
+  #
+  # The following example configures two environment variables, DB_HOST and DB_PORT:
+  #
+  # EXAMPLE:
+  #
+  #envVars:
+  #  DB_HOST: "mysql.default.svc.cluster.local"
+  #  DB_PORT: 3306
+  envVars:
+    logging.level.root: WARN
+    JAVA_TOOL_OPTIONS: -Xms256m -Xmx2g -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Dsun.zip.disableMemoryMapping=true -Dvariable=value # read from System.getProperty("variable")
+    TZ: America/Guayaquil
+
+
+  # configMaps is a map that specifies the ConfigMap resources that should be exposed to the main application container. Each
+  # entry in the map represents a ConfigMap resource. The key refers to the name of the ConfigMap that should be exposed,
+  # with the value specifying how to expose the ConfigMap. The value is also a map and has the following attributes:
+  #   - as (enum[volume,environment,none]) (required)
+  #     : ConfigMaps can be exposed to Pods as a volume mount, or as environment variables. This attribute is a string
+  #       enum that is expected to be either "volume" or "environment", specifying that the ConfigMap should be exposed as a
+  #       mounted volume or via environment variables respectively. This attribute can also be set to "none", which
+  #       disables the `ConfigMap` on the container.
+  #   - mountPath (string)
+  #     : For ConfigMaps mounted as a volume, specify the mount path on the container file system where the config values
+  #       will be available.  Required when the ConfigMap is exposed as a volume. Ignored when the ConfigMap is exposed as
+  #       environment variables.
+  #   - items (map[ConfigMapItem])
+  #     : Specify how each ConfigMap value should be made available. The keys are the key of the ConfigMap that you wish
+  #       to configure, while the value is another map that controls how that key should be exposed. Required when the
+  #       ConfigMap is exposed as environment variables. When the ConfigMap is exposed as a volume, this field is optional.
+  #       If empty for volume ConfigMaps, all ConfigMpas will be mounted with the key as the file name relative to the
+  #       mountPath. See below for expected attributes.
+  # The expected attributes of the `ConfigMapItem` map (the submap within `items`) are:
+  #   - filePath   (string) : The file path relative to the ConfigMap mountPath where the value of the ConfigMap keyed at
+  #                           the given key of the item should be mounted to in the container. Ignored when the ConfigMap
+  #                           is exposed as environment variables.
+  #   - fileMode   (string) : The permissions mode of the file when mounted in the container. Ignored when the ConfigMap is
+  #                           exposed as environment variables. Expected to be the octal (e.g 777, 644). Defaults to 644.
+  #   - envVarName (string) : The name of the environment variable where the value of the ConfigMap keyed at the given key
+  #                           of the item should be stored. Ignored when the ConfigMap is exposed as a volume mount.
+  #
+  # NOTE: These config values are only automatically injected to the main application container. To add them to the side
+  # car containers, use the official Kubernetes Pod syntax:
+  # https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+  #
+  # The following example exposes the ConfigMap `myconfig` as a volume mounted to `/etc/myconfig`, while it exposes the
+  # ConfigMap `myotherconfig` as an environment variable.
+  #
+  # EXAMPLE:
+  #
+  configMaps:
+    env: #name of configmap
+      as: environment
+      items:
+        CURRENT_PROFILE:
+          envVarName: SPRING_PROFILES_ACTIVE
+        ENV:
+          envVarName: env
+        DOMAIN:
+          envVarName: domain
+        SMXMBASE_JDBC_URL:
+          envVarName: DB_JDBC_URL
+        SMXMBASE_USERNAME:
+          envVarName: DB_USERNAME
+  #    sshsecret: #name of configmap
+  #      as: volume
+  #      mountPath: /var/smx/
+  #      items:
+  #        ID_RSA:
+  #          filePath: id_rsa
+  #          fileMode: 644
+  # secrets is a map that specifies the Secret resources that should be exposed to the main application container. Each entry in
+  # the map represents a Secret resource. The key refers to the name of the Secret that should be exposed, with the value
+  # specifying how to expose the Secret. The value is also a map and has the following attributes:
+  #   - as (enum[volume,environment,none]) (required)
+  #     : Secrets can be exposed to Pods as a volume mount, or as environment variables. This attribute is a string enum
+  #       that is expected to be either "volume" or "environment", specifying that the Secret should be exposed as a mounted
+  #       volume or via environment variables respectively. This attribute can also be set to "none", which disables the
+  #       `Secret` on the container.
+  #   - mountPath (string)
+  #     : For Secrets mounted as a volume, specify the mount path on the container file system where the secrets will be
+  #       available. Required when the Secret is exposed as a volume. Ignored when the Secret is exposed as environment
+  #       variables.
+  #   - items (map[SecretItem])
+  #     : Specify how each Secret value should be made available. The keys are the key of the Secret that you wish to
+  #       configure, while the value is another map that controls how that key should be exposed. Required when the Secret
+  #       is exposed as environment variables. When the Secret is exposed as a volume, this field is optional. If empty for
+  #       volume Secrets, all Secrets will be mounted with the key as the file name relative to the mountPath. See below
+  #       for expected attributes.
+  # The expected attributes of the `SecretItem` map (the submap within `items`) are:
+  #   - filePath   (string) : The file path relative to the Secret mountPath where the value of the Secret keyed at the
+  #                           given key of the item should be mounted to in the container. Ignored when the Secret is
+  #                           exposed as environment variables.
+  #   - fileMode   (string) : The permissions mode of the file when mounted in the container. Ignored when the Secret is
+  #                           exposed as environment variables. Expected to be the octal (e.g 777, 644). Defaults to 644.
+  #   - envVarName (string) : The name of the environment variable where the value of the Secret keyed at the given key of
+  #                           the item should be stored. Ignored when the Secret is exposed as a volume mount.
+  #
+  # NOTE: These secrets are only automatically injected to the main application container. To add them to the side car
+  # containers, use the official Kubernetes Pod syntax:
+  # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets
+  #
+  # The following example exposes the Secret `mysecret` as a volume mounted to `/etc/mysecret`, while it exposes the
+  # Secret `myothersecret` as an environment variable.
+  #
+  # EXAMPLE:
+  #
+  secret:
+    name: cf-preproduccion
+
+  secrets:
+    cf-preproduccion:
+      as: environment
+      items:
+        smxmbase:
+          envVarName: DB_PASSWORD
+#        redis-password:
+#          envVarName: REDIS_PASSWORD          
+    cf-produccion:
+      as: environment
+      items:
+        smxmbase:
+          envVarName: DB_PASSWORD
+#        redis-password:
+#          envVarName: REDIS_PASSWORD
+#    ssh-secret: #name of configmap
+#      as: volume
+#      mountPath: /home/
+#      items:
+#        id-rsa:
+#          filePath: id_rsa
+#          fileMode: 644
+
+  persistence:
+    enabled: false
+    nfsServer: 10.200.6.133
+    pathServer: /cf-nfs/smx/archivos/base
+    path: /var/smx/archivos
+    size: 1Gi
+

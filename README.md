@@ -1,2 +1,1 @@
-# hero
-Prueba tÃ©cnica Spring Boot
+Prueba técnica Spring Boot

@@ -1,0 +1,170 @@
+categories:
+  - Backend
+  - Base
+  - SMX
+questions:
+  - variable: deployment.image.registry
+    default: "cf1dck.cfavorita.net"
+    description: "Docker registry"
+    type: string
+    required: true
+    label: Docker registry
+    group: "Docker Image Settings"
+  - variable: deployment.image.pullPolicy
+    default: "Always"
+    description: "Docker pull policy"
+    type: enum
+    options:
+      - "Always"
+      - "IfNotPresent"
+    required: true
+    label: Docker pull policy
+    group: "Docker Image Settings"
+  - variable: deployment.imagePullSecrets[0]
+    default: "cf-regcred"
+    description: "Image Pull Secret"
+    type: string #secrets type docker-registry
+    required: true
+    label: Image Pull Secret
+    group: "Docker Image Settings"
+
+  - variable: deployment.ingress.hosts[0].host
+    default: "aplpre.favorita.ec"
+    description: "System domain"
+    type: enum
+    options:
+      - "www.cfavorita.ec"
+      - "www.cdfavorita.ec"
+      - "aplpre.favorita.ec"
+      - "apldes.favorita.ec"
+      - "apldcalidad.favorita.ec"
+    required: true
+    label: System domain
+    group: "Ingress Settings"
+  - variable: deployment.ingress.hosts[0].paths[0]
+    default: "/heroServices/"
+    description: "Context"
+    type: string
+    required: true
+    label: Context
+    group: "Ingress Settings"
+
+  - variable: deployment.resources.requests.cpu
+    default: "100m"
+    description: "CPU request"
+    type: string
+    required: true
+    label: CPU request
+    group: "Resource settings"
+  - variable: deployment.resources.limits.cpu
+    default: "1000m"
+    description: "CPU limits"
+    type: string
+    required: true
+    label: CPU limits
+    group: "Resource settings"
+  - variable: deployment.resources.requests.memory
+    default: "1024Mi"
+    description: "Memory request"
+    type: string
+    required: true
+    label: Memory request
+    group: "Resource settings"
+  - variable: deployment.resources.limits.memory
+    default: "2048Mi"
+    description: "Memory limits"
+    type: string
+    required: true
+    label: Memory limits
+    group: "Resource settings"
+
+  - variable: deployment.envVars.JAVA_TOOL_OPTIONS
+    default: "-Xms256m -Xmx2g -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Dsun.zip.disableMemoryMapping=true -Dvariable=myVar"
+    description: "JAVA_TOOL_OPTIONS"
+    type: string
+    required: true
+    label: JAVA_TOOL_OPTIONS
+    group: "App Settings"
+  - variable: deployment.secret.name
+    default: "cf-preproduccion"
+    description: "Secrets"
+    type: enum
+    options:
+      - "cf-preproduccion"
+      - "cf-produccion"
+    required: true
+    label: Secrets
+    group: "App Settings"
+  - variable: deployment.persistence.enabled
+    default: false
+    description: "Enable persistent volume for App"
+    type: boolean
+    required: true
+    label: App Persistent Volume Enabled
+    show_subquestion_if: true
+    group: "App Settings"
+    subquestions:
+      - variable: deployment.persistence.size
+        default: "1Gi"
+        description: "App Persistent Volume Size"
+        type: string
+        label: App Volume Size
+      - variable: deployment.persistence.path
+        default: "/var/smx/archivos"
+        description: "App Persistent application path"
+        type: string
+        label: App Persistent application path
+      - variable: deployment.persistence.nfsServer
+        default: "10.200.6.133"
+        description: "App Persistent nfs server"
+        type: string
+        label: App Persistent nfs server
+      - variable: deployment.persistence.pathServer
+        default: "/cf-nfs/smx/archivos/base"
+        description: "App Persistent nfs path server"
+        type: string
+        label: App Persistent nfs path server 
+
+  - variable: deployment.livenessProbe.httpGet.path
+    default: "/heroServices/actuator/health"
+    description: "Liveness probe path"
+    type: string
+    required: true
+    label: Liveness probe path
+    group: "Liveness Probe Settings"
+  - variable: deployment.livenessProbe.httpGet.port
+    default: "8080"
+    description: "Liveness probe port"
+    type: string
+    required: true
+    label: Liveness probe port
+    group: "Liveness Probe Settings"
+  - variable: deployment.livenessProbe.initialDelaySeconds
+    default: "90"
+    description: "Liveness initial delay seconds"
+    type: string
+    required: true
+    label: Liveness initial delay seconds
+    group: "Liveness Probe Settings"
+
+  - variable: deployment.readinessProbe.httpGet.path
+    default: "/heroServices/actuator/health"
+    description: "Readiness probe path"
+    type: string
+    required: true
+    label: Readiness probe path
+    group: "Readiness Probe Settings"
+  - variable: deployment.readinessProbe.httpGet.port
+    default: "8080"
+    description: "Readiness probe port"
+    type: string
+    required: true
+    label: Readiness probe port
+    group: "Readiness Probe Settings"
+  - variable: deployment.readinessProbe.initialDelaySeconds
+    default: "90"
+    description: "Readiness initial delay seconds"
+    type: string
+    required: true
+    label: Readiness initial delay seconds
+    group: "Readiness Probe Settings"

@@ -1,0 +1,42 @@
+logging:
+  #pattern:
+  #console: %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+  level:
+    root: DEBUG
+---
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test_cache_app;DB_CLOSE_ON_EXIT=FALSE;MODE=DB2
+    username: SA
+    password:
+    initialization-mode: always
+    data: classpath:data.sql
+    hikari:
+      connectionTimeout: 60000
+      idleTimeout: 600000
+      maxLifetime: 1800000
+      maximumPoolSize: 20
+      connectionTestQuery: SELECT 1
+  jpa:
+    showSql: true
+    properties:
+      format_sql: true
+      hibernate:
+        hbm2ddl:
+          auto: create
+        dialect: org.hibernate.dialect.H2Dialect
+        id:
+          new_generator_mappings: false
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+---
+spring:
+  thread:
+    maxPoolSize: 20
+    corePoolSize: 10

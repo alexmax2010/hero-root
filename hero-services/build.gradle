@@ -1,0 +1,97 @@
+apply from: "${serverCodeUrl}spring-boot2.gradle?raw"
+apply from: "${serverCodeUrl}docker-ws.gradle?raw"
+
+uploadArchives.enabled = false
+
+springBoot {
+    buildInfo ()
+}
+
+dependencies {
+    api project(":hero-core")
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-json'
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-ws-spring5'
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-metric-spring5'
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-orm-hibernate5'//dialect db2
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-boot-jpa'
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-validation-spring5'
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-service-jpa'
+
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-boot-openapi3', version: '2.1.0-SNAPSHOT'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.4.4'
+
+    implementation 'io.micrometer:micrometer-core'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    //security
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+    implementation group: 'org.keycloak', name: 'keycloak-spring-security-adapter'
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter'
+    implementation group: 'org.keycloak', name: 'keycloak-core'
+
+    implementation group: 'ec.com.kruger', name: 'fwk-utilitario-security-sso-spring-boot-2'
+
+
+    implementation('org.hibernate.validator:hibernate-validator')
+    implementation('org.hibernate:hibernate-entitymanager')
+    testImplementation('com.zaxxer:HikariCP')
+
+    //embeded runnable app
+    implementation group: 'net.sf.jt400', name: 'jt400'
+
+    //Logs
+    implementation('org.springframework.boot:spring-boot-starter-logging')
+
+    //Spring boot
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //Spring boot actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    //Devops
+    runtimeOnly('org.springframework.boot:spring-boot-starter-tomcat')
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+
+
+    //Test
+
+    //Test Rest documentation
+    testImplementation "capital.scalable:spring-auto-restdocs-core"
+    testImplementation "org.springframework.restdocs:spring-restdocs-core"
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc"
+
+    //Test json response
+
+    testImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
+
+    testImplementation group: 'com.h2database', name: 'h2'
+
+    testImplementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-orm-hibernate5'//dialect db2
+    testImplementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-boot-test'
+
+    testImplementation('com.jayway.jsonpath:json-path')
+    testImplementation('com.jayway.jsonpath:json-path-assert')
+
+    testImplementation 'com.github.json-template:jsontemplate:0.2.1'
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'ec.com.kruger', name: 'fwk-utilitario-spring-ws-spring5-test'
+
+    testImplementation group: 'junit', name: 'junit'
+    testImplementation group: 'org.mockito', name: 'mockito-core'
+
+    //providedRuntime group: 'com.h2database', name: 'h2'
+    integrationTestImplementation group: 'com.h2database', name: 'h2'
+
+    integrationTestImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock:2.2.3.RELEASE'
+    integrationTestImplementation('org.bitbucket.b_c:jose4j:0.7.1')
+    integrationTestImplementation "com.github.tomakehurst:wiremock-jre8:2.26.3"
+
+}

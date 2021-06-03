@@ -70,6 +70,7 @@ public class HeroService extends BaseService<HeroEntity, IHeroRepository> implem
     /**
      * {@inheritDoc}
      */
+    @CacheEvict(value = "allsuperheroes", allEntries = true)
     @Override
     public void update(HeroVO request) {
         this.repository.update(request);

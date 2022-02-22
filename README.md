@@ -1,1 +1,13 @@
-Prueba técnica Spring Boot
+#Prueba técnica 
+
+- Spring Boot
+- Spring Data JPA
+- QueryDSL
+- H2 DataBase
+- Keycloak
+- Gradle
+
+
+#Documentación api
+
+https://github.com/alexmax2010/doc-ws-hero
